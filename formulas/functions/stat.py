@@ -77,7 +77,19 @@ FUNCTIONS['COUNTBLANK'] = wrap_func(functools.partial(
 FUNCTIONS['COUNTIF'] = wrap_func(functools.partial(
     xfilter, len, operating_range=None
 ))
-FUNCTIONS['COUNTIFS'] = wrap_func(functools.partial(_manyIfs, func=len))
+
+
+def xcountifs(*args):
+    if len(args) > 0:
+        newArgs = [args[0]]
+        for arg in args:
+            newArgs.append(arg)
+        return _manyIfs(*newArgs, func=len)
+    else:
+        return 0
+
+
+FUNCTIONS['COUNTIFS'] = wrap_func(xcountifs)
 
 
 def xsort(values, k, large=True):
