@@ -175,7 +175,7 @@ def xindex(array, row_num, col_num=None, area_num=1):
 FUNCTIONS['INDEX'] = wrap_func(xindex, ranges=True)
 
 
-def xmatch(lookup_value, lookup_array, match_type=1):
+def xmatch(lookup_value, lookup_array, match_type=0):
     res = [Error.errors['#N/A']]
     t_id = _get_type_id(lookup_value)
     if match_type > 0:
@@ -229,7 +229,7 @@ FUNCTIONS['MATCH'] = wrap_ufunc(
 FUNCTIONS['XMATCH'] = FUNCTIONS['MATCH']
 
 
-def xlookup(lookup_val, lookup_vec, result_vec=None, match_type=1):
+def xlookup(lookup_val, lookup_vec, result_vec=None, match_type=0):
     result_vec = lookup_vec if result_vec is None else result_vec
     r = xmatch(lookup_val, lookup_vec, match_type)
     if not isinstance(r, XlError):
@@ -245,6 +245,7 @@ FUNCTIONS['LOOKUP'] = wrap_ufunc(
     check_error=lambda *a: get_error(a[:1]), excluded={1, 2}
 )
 FUNCTIONS['XLOOKUP'] = FUNCTIONS['LOOKUP']
+FUNCTIONS['_XLFN.XLOOKUP'] = FUNCTIONS['LOOKUP']
 
 
 def _hlookup_parser(val, vec, index, match_type=1, transpose=False):
