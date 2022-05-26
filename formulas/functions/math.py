@@ -16,7 +16,7 @@ import numpy as np
 from decimal import Decimal, ROUND_HALF_UP
 from . import (
     get_error, raise_errors, is_number, flatten, wrap_ufunc, wrap_func,
-    replace_empty, Error, xfilter, wrap_impure_func, COMPILING
+    replace_empty, Error, xfilter, wrap_impure_func, COMPILING, _manyIfs
 )
 
 # noinspection PyDictCreation
@@ -369,6 +369,7 @@ def xsum(*args, func=sum):
 FUNCTIONS['PRODUCT'] = wrap_func(functools.partial(xsum, func=np.prod))
 FUNCTIONS['SUM'] = wrap_func(xsum)
 FUNCTIONS['SUMIF'] = wrap_func(functools.partial(xfilter, xsum))
+FUNCTIONS['SUMIFS'] = wrap_func(functools.partial(_manyIfs, func=xsum))
 FUNCTIONS['TAN'] = wrap_ufunc(np.tan)
 FUNCTIONS['TANH'] = wrap_ufunc(np.tanh)
 FUNCTIONS['TRUNC'] = wrap_ufunc(functools.partial(xround, func=math.trunc))

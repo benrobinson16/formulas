@@ -323,11 +323,36 @@ _xfilter = np.vectorize(_xfilter, otypes=[object], excluded={0, 1, 3})
 
 
 def xfilter(accumulator, test_range, condition, operating_range=None):
+    print(accumulator)
+    print(test_range)
+    print(condition)
+    print(operating_range)
     operating_range = test_range if operating_range is None else operating_range
     # noinspection PyTypeChecker
     test_range = {'raw': replace_empty(test_range, '')}
     res = _xfilter(accumulator, test_range, condition, operating_range)
+    print(res)
+    print(res.view(Array))
     return res.view(Array)
+
+
+def _manyIfs(*args, func):
+    v = args[0]
+    remaining_conditions = args[1:]
+    possible_indices = np.arange(len(v)).reshape(len(v), 1)
+    indices = set(range(len(v)))
+
+    while len(remaining_conditions) > 1:
+        y = xfilter(lambda x: x, remaining_conditions[0], remaining_conditions[1], operating_range=possible_indices)
+        y = y.reshape(len(y))
+        indices = indices.intersection(y)
+        remaining_conditions = remaining_conditions[2:]
+
+    output = []
+    for i in indices:
+        output.append(v[i])
+
+    return func(output)
 
 
 def flatten(v, check=is_number):

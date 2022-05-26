@@ -55,6 +55,17 @@ def xcolumn(cell=None, ref=None):
     return _xref(lambda r: np.arange(r['n1'], r['n2'] + 1)[None, :], cell, ref)
 
 
+def xcolumns(arr):
+    if len(arr) > 0:
+        row = arr[0]
+        if isinstance(row, list):
+            return len(row)
+        else:
+            return 1
+    else:
+        return 0
+
+
 FUNCTIONS['COLUMN'] = {
     'extra_inputs': collections.OrderedDict([(CELL, None)]),
     'function': wrap_func(xcolumn, ranges=True)
@@ -63,7 +74,7 @@ FUNCTIONS['ROW'] = {
     'extra_inputs': collections.OrderedDict([(CELL, None)]),
     'function': wrap_func(xrow, ranges=True)
 }
-
+FUNCTIONS['COLUMNS'] = wrap_func(xcolumns)
 
 def xaddress(row_num, column_num, abs_num=1, a1=True, sheet_text=None):
     from ..tokens.operand import _index2col
@@ -215,6 +226,7 @@ FUNCTIONS['MATCH'] = wrap_ufunc(
     xmatch, check_error=lambda *a: get_error(a[:1]), excluded={1, 2},
     input_parser=lambda val, vec, match_type=1: (val, np.ravel(vec), match_type)
 )
+FUNCTIONS['XMATCH'] = FUNCTIONS['MATCH']
 
 
 def xlookup(lookup_val, lookup_vec, result_vec=None, match_type=1):
@@ -232,6 +244,7 @@ FUNCTIONS['LOOKUP'] = wrap_ufunc(
     ),
     check_error=lambda *a: get_error(a[:1]), excluded={1, 2}
 )
+FUNCTIONS['XLOOKUP'] = FUNCTIONS['LOOKUP']
 
 
 def _hlookup_parser(val, vec, index, match_type=1, transpose=False):
@@ -255,3 +268,5 @@ FUNCTIONS['VLOOKUP'] = wrap_ufunc(
     xlookup, input_parser=functools.partial(_hlookup_parser, transpose=True),
     check_error=lambda *a: get_error(a[:1]), excluded={1, 2, 3}
 )
+
+

@@ -13,7 +13,7 @@ import functools
 import numpy as np
 from . import (
     wrap_ufunc, Error, flatten, get_error, value_return, wrap_func, XlError,
-    raise_errors
+    raise_errors, xfilter
 )
 
 FUNCTIONS = {}

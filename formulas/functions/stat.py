@@ -17,7 +17,7 @@ import schedula as sh
 from . import (
     raise_errors, flatten, wrap_func, Error, is_number, _text2num, xfilter,
     XlError, wrap_ufunc, replace_empty, get_error, is_not_empty, _convert_args,
-    convert_nan, FoundError, value_return
+    convert_nan, FoundError, value_return, _manyIfs
 )
 
 FUNCTIONS = {}
@@ -45,29 +45,13 @@ def _xaverage(v):
     return Error.errors['#DIV/0!']
 
 
-def _xaverageIfs(v, *args):
-    remaining_conditions = args
-    possible_indices = np.arange(len(v)).reshape(len(v), 1)
-    indices = set(range(len(v)))
-    while len(remaining_conditions) > 1:
-        y = xfilter(lambda x: x, remaining_conditions[0], remaining_conditions[1], operating_range=possible_indices)
-        indices = indices.intersection(y)
-        remaining_conditions = remaining_conditions[2:]
-
-    output = []
-    for i in indices:
-        output.append(v[i])
-
-    return xaverage(output)
-
-
 xaverage = functools.partial(xfunc, func=_xaverage, default=None)
 FUNCTIONS['AVERAGE'] = wrap_func(xaverage)
 FUNCTIONS['AVERAGEA'] = wrap_func(functools.partial(
     xfunc, convert=_convert, check=is_not_empty, func=_xaverage, default=None
 ))
 FUNCTIONS['AVERAGEIF'] = wrap_func(functools.partial(xfilter, xaverage))
-FUNCTIONS['AVERAGEIFS'] = wrap_func(_xaverageIfs)
+FUNCTIONS['AVERAGEIFS'] = wrap_func(functools.partial(_manyIfs, func=_xaverage))
 
 
 def xcorrel(arr1, arr2):
@@ -93,6 +77,7 @@ FUNCTIONS['COUNTBLANK'] = wrap_func(functools.partial(
 FUNCTIONS['COUNTIF'] = wrap_func(functools.partial(
     xfilter, len, operating_range=None
 ))
+FUNCTIONS['COUNTIFS'] = wrap_func(functools.partial(_manyIfs, func=len))
 
 
 def xsort(values, k, large=True):
