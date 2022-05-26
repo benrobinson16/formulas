@@ -323,16 +323,10 @@ _xfilter = np.vectorize(_xfilter, otypes=[object], excluded={0, 1, 3})
 
 
 def xfilter(accumulator, test_range, condition, operating_range=None):
-    print(accumulator)
-    print(test_range)
-    print(condition)
-    print(operating_range)
     operating_range = test_range if operating_range is None else operating_range
     # noinspection PyTypeChecker
     test_range = {'raw': replace_empty(test_range, '')}
     res = _xfilter(accumulator, test_range, condition, operating_range)
-    print(res)
-    print(res.view(Array))
     return res.view(Array)
 
 
